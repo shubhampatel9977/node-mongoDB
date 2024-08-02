@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   type: { type: String, default: 'user' },
   refreshToken: { type: String, default: '' },
   otp: { type: Number, default: null },
+  otpVerify: { type: Boolean, default: false },
 },{ timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

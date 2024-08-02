@@ -38,6 +38,10 @@ const saveOtp = async (userId, otp) => {
 const otpVerifyService = async (email, otp) => {
   try {
       const userData = await userModel.findOne({ email, otp });
+
+      if(userData)
+        await userModel.updateOne({ _id: userData._id }, { $set: { otpVerify: true } });
+
       return userData;
   } catch (error) {
     console.error("Something wrong in otpVerifyService", error?.message);

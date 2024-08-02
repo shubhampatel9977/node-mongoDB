@@ -24,11 +24,19 @@ const signUpController = async (req, res) => {
     const hashPass = await cryptPassword(value.password);
     value.password = hashPass;
 
-    // Save User
-    const result = await authService.signInService(value);
+    // Otp ganrate and save in document
+    const otp = randomNumberDigits(6);
+    value.otp = otp;
 
-    if (result)
-      return ApiSuccess(res, 201, true, "SignUp successfully")
+    // Send otp mail to user
+    sendEmail(value.email, "OTP Varification", '', sendOtpTemplate(otp));
+
+    // Save User
+    const userData = await authService.signInService(value);
+
+    if (userData)
+      return ApiSuccess(res, 200, true, "Send OTP your email address")
+
   } catch (error) {
     return ApiError(res, 500, error?.message);
   }
@@ -114,7 +122,7 @@ const forgotPasswordController = async (req, res) => {
       // Send Mail to user 
       await sendEmail(userData.email, "OTP Varification", '', sendOtpTemplate(otp));
 
-      return ApiSuccess(res, 200, true, "Send otp your register email address");
+      return ApiSuccess(res, 200, true, "Send OTP your register email address");
 
     } else {
       return ApiSuccess(res, 200, false, "Invalid Email");
