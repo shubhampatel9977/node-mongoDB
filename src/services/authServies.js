@@ -10,9 +10,18 @@ const signInService = async (payload) => {
   }
 };
 
+const signInUpdateService = async (payload) => {
+  try {
+    const updateData = await userModel.updateOne({ email: payload?.email }, { $set: payload });
+    return updateData
+  } catch (error) {
+    console.error("Something wrong in signInService", error?.message);
+  }
+};
+
 const logInService = async (data) => {
   try {
-      const userData = await userModel.findOne({ email: data });
+      const userData = await userModel.findOne({ email: data, otpVerify: true });
       return userData;
   } catch (error) {
     console.error("Something wrong in logInService", error?.message);
@@ -58,6 +67,7 @@ const saveNewPassword = async (userId, password) => {
 
 module.exports = {
   signInService,
+  signInUpdateService,
   logInService,
   saveRefreshToken,
   saveOtp,

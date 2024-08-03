@@ -17,7 +17,7 @@ const signUpController = async (req, res) => {
 
     // Check if the email already exists in the database
     const existingUser = await userModel.findOne({ email: value.email });
-    if (existingUser)
+    if (existingUser && existingUser?.otpVerify === true)
       return ApiSuccess(res, 200, false, "Email already exists");
 
     // Hash the password before saving
@@ -31,11 +31,20 @@ const signUpController = async (req, res) => {
     // Send otp mail to user
     sendEmail(value.email, "OTP Varification", '', sendOtpTemplate(otp));
 
-    // Save User
-    const userData = await authService.signInService(value);
+    if(existingUser && existingUser?.otpVerify === false){
+      // Update User
+      const userData = await authService.signInUpdateService(value);
 
-    if (userData)
-      return ApiSuccess(res, 200, true, "Send OTP your email address")
+      if (userData)
+        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
+
+    } else {
+      // Save User
+      const userData = await authService.signInService(value);
+
+      if (userData)
+        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
+    }
 
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -60,9 +69,8 @@ const logInController = async (req, res) => {
 
       const payload = {
         userId: userData._id,
-        email: userData.email,
         type: userData.type,
-      }
+      };
 
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
@@ -70,7 +78,17 @@ const logInController = async (req, res) => {
       // Save refresh token to user document
       await authService.saveRefreshToken(userData._id, refreshToken);
 
-      return ApiSuccess(res, 200, true, "User Login Successfully", { accessToken, refreshToken })
+      const userInfo = {
+        _id: userData._id,
+        name: userData.name,
+        email: userData.email,
+        type: userData.type,
+        otpVerify: userData.otpVerify,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt,
+      };
+
+      return ApiSuccess(res, 200, true, "User Login Successfully", { accessToken, refreshToken, userInfo })
 
     } else {
       return ApiSuccess(res, 200, false, "Invalid Email or Password");
