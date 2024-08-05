@@ -36,14 +36,14 @@ const signUpController = async (req, res) => {
       const userData = await authService.signInUpdateService(value);
 
       if (userData)
-        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
+        return ApiSuccess(res, 201, true, "User Register please verify your OTP!")
 
     } else {
       // Save User
       const userData = await authService.signInService(value);
 
       if (userData)
-        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
+        return ApiSuccess(res, 201, true, "User Register please verify your OTP!")
     }
 
   } catch (error) {
