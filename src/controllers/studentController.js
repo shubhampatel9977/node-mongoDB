@@ -81,7 +81,7 @@ const getStudentByIdController = async (req, res) => {
     if (studentData) {
       return ApiSuccess(res, 200, true, "Get student data", studentData);
     } else {
-      return ApiSuccess(res, 200, false, "Student not found", null);
+      return ApiError(res, 400, "Student not found");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -124,7 +124,7 @@ const updateStudentByIdController = async (req, res) => {
     if (studentUpdateData) {
       return ApiSuccess(res, 200, true, "Student update successfully", studentUpdateData);
     } else {
-      return ApiSuccess(res, 200, false, "Student not found");
+      return ApiError(res, 400, "Student not found");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -151,7 +151,7 @@ const deleteStudentByIdController = async (req, res) => {
 
       return ApiSuccess(res, 200, true, "Student delete successfully");
     } else {
-      return ApiSuccess(res, 200, false, "Student not found");
+      return ApiError(res, 400, "Student not found");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);

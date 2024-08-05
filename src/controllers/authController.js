@@ -18,7 +18,7 @@ const signUpController = async (req, res) => {
     // Check if the email already exists in the database
     const existingUser = await userModel.findOne({ email: value.email });
     if (existingUser && existingUser?.otpVerify === true)
-      return ApiSuccess(res, 200, false, "Email already exists");
+      return ApiError(res, 409, "Email already exists");
 
     // Hash the password before saving
     const hashPass = await cryptPassword(value.password);
@@ -36,14 +36,14 @@ const signUpController = async (req, res) => {
       const userData = await authService.signInUpdateService(value);
 
       if (userData)
-        return ApiSuccess(res, 201, true, "User Register please verify your OTP!")
+        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
 
     } else {
       // Save User
       const userData = await authService.signInService(value);
 
       if (userData)
-        return ApiSuccess(res, 201, true, "User Register please verify your OTP!")
+        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
     }
 
   } catch (error) {
@@ -65,7 +65,7 @@ const logInController = async (req, res) => {
       // Password Maching
       const verifyPass = await comparePassword(value.password, userData.password);
       if (!verifyPass)
-        return ApiSuccess(res, 200, false, "Invalid Email or Password");
+        return ApiError(res, 401, "Invalid Email or Password");
 
       const payload = {
         userId: userData._id,
@@ -91,7 +91,7 @@ const logInController = async (req, res) => {
       return ApiSuccess(res, 200, true, "User Login Successfully", { accessToken, refreshToken, userInfo })
 
     } else {
-      return ApiSuccess(res, 200, false, "Invalid Email or Password");
+      return ApiError(res, 401, "Invalid Email or Password");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -109,7 +109,7 @@ const refreshTokenController = async (req, res) => {
     const userData = await verifyRefreshToken(value.refreshToken);
 
     if (userData?.error)
-      return ApiError(res, 403, "Forbidden - Refresh token invalid or expire, please login again");
+      return ApiError(res, 401, "Forbidden - Refresh token invalid or expire, please login again");
 
     // Generate Access Token 
     const accessToken = await generateAccessToken(userData?.userInfo);
@@ -143,7 +143,7 @@ const forgotPasswordController = async (req, res) => {
       return ApiSuccess(res, 200, true, "Send OTP your register email address");
 
     } else {
-      return ApiSuccess(res, 200, false, "Invalid Email");
+      return ApiError(res, 400, "Invalid Email");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -163,7 +163,7 @@ const otpVerifyController = async (req, res) => {
     if (userData) {
       return ApiSuccess(res, 200, true, "OTP verify successfully");
     } else {
-      return ApiSuccess(res, 200, false, "Invalid OTP");
+      return ApiError(res, 400, "Invalid Email");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -189,7 +189,7 @@ const setNewPasswordController = async (req, res) => {
 
       return ApiSuccess(res, 200, true, "Password update sucessflly");
     } else {
-      return ApiSuccess(res, 200, false, "Invalid Email");
+      return ApiError(res, 400, "Invalid Email");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
