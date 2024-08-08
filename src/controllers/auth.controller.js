@@ -1,5 +1,5 @@
 const authValidation = require("../validations/authValidation");
-const userModel = require("../models/userModel");
+const userModel = require("../models/user.model");
 const { cryptPassword, comparePassword } = require("../utils/passwordCrypt");
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require("../middleware/authorization");
 const { ApiSuccess, ApiError } = require("../utils/ApiResponse");

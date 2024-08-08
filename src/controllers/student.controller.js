@@ -1,5 +1,5 @@
 const studentValidation = require("../validations/studentValidation");
-const studentModel = require("../models/studentModel");
+const studentModel = require("../models/student.model");
 const { deleteFile } = require("../utils/fileUploadOnLocal");
 const { ApiSuccess, ApiError } = require("../utils/ApiResponse");
 
@@ -59,7 +59,7 @@ const getAllStudentsController = async (req, res) => {
 
     const data = {
       currentPage: page,
-      totalPage: Math.ceil(total / limit), // Calculate total number of pages
+      totalPage: Math.ceil(totalStudents / limit), // Calculate total number of pages
       totalCount: totalStudents,
       studentsData: students,
     }

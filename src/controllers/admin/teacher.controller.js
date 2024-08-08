@@ -1,5 +1,5 @@
 const teacherValidation = require("../../validations/admin/teacherValidation");
-const teacherModel = require("../../models/admin/teacherModel");
+const teacherModel = require("../../models/admin/teacher.model");
 const { deleteFile } = require("../../utils/fileUploadOnLocal");
 const { ApiSuccess, ApiError } = require("../../utils/ApiResponse");
 
@@ -59,7 +59,7 @@ const getAllTeachersController = async (req, res) => {
 
       const data = {
         currentPage: page,
-        totalPage: Math.ceil(total / limit), // Calculate total number of pages
+        totalPage: Math.ceil(totalTeachers / limit), // Calculate total number of pages
         totalCount: totalTeachers,
         teachersData: teachers,
       }

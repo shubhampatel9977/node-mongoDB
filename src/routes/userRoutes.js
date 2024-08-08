@@ -1,7 +1,7 @@
 const express = require("express");
 const { authorize } = require("../middleware/authorization");
 const { createMulterConfig } = require('../utils/fileUploadOnLocal');
-const studentController = require("../controllers/studentController");
+const studentController = require("../controllers/student.controller");
 
 // Create multer instance
 const upload = createMulterConfig({
