@@ -1,11 +1,10 @@
 const studentValidation = require("../validations/studentValidation");
-const studentService = require("../services/studentService");
+const studentModel = require("../models/studentModel");
 const { deleteFile } = require("../utils/fileUploadOnLocal");
 const { ApiSuccess, ApiError } = require("../utils/ApiResponse");
 
 const createStudentController = async (req, res) => {
   try {
-
     // If getting single file then use this function
     const file = req.file;
 
@@ -29,9 +28,10 @@ const createStudentController = async (req, res) => {
     value.profile = file?.path
 
     // Create Student
-    const result = await studentService.createStudentService(value);
-    if (result)
-      return ApiSuccess(res, 201, true, "Student add successfully", result);
+    const addStudent = new studentModel(value);
+    await addStudent.save();
+
+    return ApiSuccess(res, 201, true, "Student add successfully", result);
 
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -48,21 +48,23 @@ const getAllStudentsController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     const { page = 1, limit = 10, name = '' } = value;
+    const offset = (page - 1) * limit;
+
+    // Create a filter object for the search query
+    const filter = name ? { name: new RegExp(name, 'i') } : {};
 
     // Get all students
-    const allStudents = await studentService.getAllStudentsService(page, limit, name);
+    const totalStudents = await studentModel.countDocuments(filter);
+    const students = await studentModel.find(filter).skip(offset).limit(limit);
 
-    if (allStudents) {
-      const { total, students } = allStudents;
-
-      const data = {
-        currentPage: page,
-        totalPage: Math.ceil(total / limit), // Calculate total number of pages
-        totalCount: total,
-        studentsData: students,
-      }
-      return ApiSuccess(res, 200, true, "Get All Students Data", data);
+    const data = {
+      currentPage: page,
+      totalPage: Math.ceil(total / limit), // Calculate total number of pages
+      totalCount: totalStudents,
+      studentsData: students,
     }
+    return ApiSuccess(res, 200, true, "Get All Students Data", data);
+
   } catch (error) {
     return ApiError(res, 500, error?.message);
   }
@@ -76,7 +78,7 @@ const getStudentByIdController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     // Get student by id
-    const studentData = await studentService.getStudentByIdService(value.id);
+    const studentData = await studentModel.findById(value.id);
 
     if (studentData) {
       return ApiSuccess(res, 200, true, "Get student data", studentData);
@@ -106,7 +108,7 @@ const updateStudentByIdController = async (req, res) => {
     if (file) {
 
       // Get student by id
-      const studentData = await studentService.getStudentByIdService(idValue.id);
+      const studentData = await studentModel.findById(idValue.id);
 
       // delete exist file path
       deleteFile(studentData?.profile, (err, data) => {
@@ -120,7 +122,8 @@ const updateStudentByIdController = async (req, res) => {
     }
 
     // Find student and update
-    const studentUpdateData = await studentService.updateStudentByIdService(idValue.id, bodyValue);
+    const studentUpdateData = await studentModel.findByIdAndUpdate(idValue.id, bodyValue);
+
     if (studentUpdateData) {
       return ApiSuccess(res, 200, true, "Student update successfully", studentUpdateData);
     } else {
@@ -137,8 +140,9 @@ const deleteStudentByIdController = async (req, res) => {
     const { error, value } = studentValidation.studentIdSchema.validate(req.params);
     if (error)
       return ApiError(res, 400, error.details[0].message);
+
     // Find and delete student
-    const studentData = await studentService.deleteStudentByIdService(value.id);
+    const studentData = await studentModel.findByIdAndDelete(value.id);
 
     if (studentData) {
 

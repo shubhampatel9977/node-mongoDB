@@ -1,11 +1,10 @@
 const teacherValidation = require("../../validations/admin/teacherValidation");
-const teacherService = require("../../services/admin/teacherService");
+const teacherModel = require("../../models/admin/teacherModel");
 const { deleteFile } = require("../../utils/fileUploadOnLocal");
 const { ApiSuccess, ApiError } = require("../../utils/ApiResponse");
 
 const createTeacherController = async (req, res) => {
   try {
-
     // If getting single file then use this function
     const file = req.file;
 
@@ -29,9 +28,10 @@ const createTeacherController = async (req, res) => {
     value.profile = file?.path
 
     // Create Teacher
-    const result = await teacherService.createTeacherService(value);
-    if (result)
-      return ApiSuccess(res, 201, true, "Teacher add successfully", result);
+    const addTeacher = new teacherModel(value);
+    await addTeacher.save();
+
+    return ApiSuccess(res, 201, true, "Teacher add successfully", result);
 
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -48,21 +48,23 @@ const getAllTeachersController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     const { page = 1, limit = 10, name = '' } = value;
+    const offset = (page - 1) * limit;
+
+    // Create a filter object for the search query
+    const filter = name ? { name: new RegExp(name, 'i') } : {};
 
     // Get all teachers
-    const allTeachers = await teacherService.getAllTeacherService(page, limit, name);
-
-    if (allTeachers) {
-      const { total, teachers } = allTeachers;
+    const totalTeachers = await teacherModel.countDocuments(filter);
+    const teachers = await teacherModel.find(filter).skip(offset).limit(limit);
 
       const data = {
         currentPage: page,
         totalPage: Math.ceil(total / limit), // Calculate total number of pages
-        totalCount: total,
+        totalCount: totalTeachers,
         teachersData: teachers,
       }
       return ApiSuccess(res, 200, true, "Get All Teachers Data", data);
-    }
+
   } catch (error) {
     return ApiError(res, 500, error?.message);
   }
@@ -76,7 +78,7 @@ const getTeacherByIdController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     // Get teacher by id
-    const teacherData = await teacherService.getTeacherByIdService(value.id);
+    const teacherData = await teacherModel.findById(value.id);
 
     if (teacherData) {
       return ApiSuccess(res, 200, true, "Get teacher data", teacherData);
@@ -106,7 +108,7 @@ const updateTeacherByIdController = async (req, res) => {
     if (file) {
 
       // Get teacher by id
-      const teacherData = await teacherService.getTeacherByIdService(idValue.id);
+      const teacherData = await teacherModel.findById(idValue.id);
 
       // delete exist file path
       deleteFile(teacherData?.profile, (err, data) => {
@@ -120,7 +122,8 @@ const updateTeacherByIdController = async (req, res) => {
     }
 
     // Find teacher and update
-    const teacherUpdateData = await teacherService.updateTeacherByIdService(idValue.id, bodyValue);
+    const teacherUpdateData = await teacherModel.findByIdAndUpdate(idValue.id, bodyValue);
+    
     if (teacherUpdateData) {
       return ApiSuccess(res, 200, true, "Teacher update successfully", teacherUpdateData);
     } else {
@@ -137,8 +140,9 @@ const deleteTeacherByIdController = async (req, res) => {
     const { error, value } = teacherValidation.teacherIdSchema.validate(req.params);
     if (error)
       return ApiError(res, 400, error.details[0].message);
+    
     // Find and delete teacher
-    const teacherData = await teacherService.deleteTeacherByIdService(value.id);
+    const teacherData = await teacherModel.findByIdAndDelete(value.id);
 
     if (teacherData) {
 

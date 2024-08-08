@@ -1,6 +1,5 @@
 const authValidation = require("../validations/authValidation");
 const userModel = require("../models/userModel");
-const authService = require("../services/authServies");
 const { cryptPassword, comparePassword } = require("../utils/passwordCrypt");
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require("../middleware/authorization");
 const { ApiSuccess, ApiError } = require("../utils/ApiResponse");
@@ -33,17 +32,16 @@ const signUpController = async (req, res) => {
 
     if(existingUser && existingUser?.otpVerify === false){
       // Update User
-      const userData = await authService.signInUpdateService(value);
+      await userModel.updateOne({ email: value?.email }, { $set: value });
 
-      if (userData)
-        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
+      return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
 
     } else {
       // Save User
-      const userData = await authService.signInService(value);
+      const addStudent = new userModel(value);
+      await addStudent.save();
 
-      if (userData)
-        return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
+      return ApiSuccess(res, 200, true, "User Register please verify your OTP!")
     }
 
   } catch (error) {
@@ -59,7 +57,7 @@ const logInController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     // Find User
-    const userData = await authService.logInService(value.email);
+    const userData = await userModel.findOne({ email: value.email, otpVerify: true });
 
     if (userData) {
       // Password Maching
@@ -76,7 +74,7 @@ const logInController = async (req, res) => {
       const refreshToken = await generateRefreshToken(payload);
 
       // Save refresh token to user document
-      await authService.saveRefreshToken(userData._id, refreshToken);
+      await userModel.updateOne({ _id: userData._id }, { $set: { refreshToken } });
 
       const userInfo = {
         _id: userData._id,
@@ -129,13 +127,13 @@ const forgotPasswordController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     // Find User
-    const userData = await authService.logInService(value.email);
-
+    const userData = await userModel.findOne({ email: value.email, otpVerify: true });
+    
     if (userData) {
       const otp = randomNumberDigits(6);
 
       // Save otp to user document
-      await authService.saveOtp(userData._id, otp);
+      await userModel.updateOne({ _id: userData._id }, { $set: { otp } });
 
       // Send Mail to user 
       await sendEmail(userData.email, "OTP Varification", '', sendOtpTemplate(otp));
@@ -158,12 +156,14 @@ const otpVerifyController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     // Find User
-    const userData = await authService.otpVerifyService(value.email, parseInt(value.otp));
+    const userData = await userModel.findOne({ email: value.email, otp: parseInt(value.otp) });
 
     if (userData) {
+      await userModel.updateOne({ _id: userData._id }, { $set: { otpVerify: true } });
+
       return ApiSuccess(res, 200, true, "OTP verify successfully");
     } else {
-      return ApiError(res, 400, "Invalid Email");
+      return ApiError(res, 400, "Invalid OTP");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -178,14 +178,14 @@ const setNewPasswordController = async (req, res) => {
       return ApiError(res, 400, error.details[0].message);
 
     // Find User
-    const userData = await authService.logInService(value.email);
+    const userData = await userModel.findOne({ email: value.email, otpVerify: true });
 
     if (userData) {
       // Hash the password before saving
       const hashPass = await cryptPassword(value.password);
 
       // Save refresh token to user document
-      await authService.saveNewPassword(userData._id, hashPass);
+      await userModel.updateOne({ _id: userData._id }, { $set: { password: hashPass } });
 
       return ApiSuccess(res, 200, true, "Password update sucessflly");
     } else {
