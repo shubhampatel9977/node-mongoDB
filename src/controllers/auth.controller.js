@@ -5,23 +5,22 @@ const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = requir
 const { ApiSuccess, ApiError } = require("../utils/ApiResponse");
 const { randomNumberDigits } = require("../utils/generateRandomNumber");
 const sendEmail = require("../utils/emailSender");
-const sendOtpTemplate  = require("../utils/Email Template/sendOtpTemplate");
+const sendOtpTemplate = require("../utils/Email Template/sendOtpTemplate");
 
 const signUpController = async (req, res) => {
   try {
     // Check Validation
     const { error, value } = authValidation.signUpSchema.validate(req.body);
-    if (error)
+    if (error) {
       return ApiError(res, 400, error.details[0].message);
+    }
 
     // Check if the email already exists in the database
     const existingUser = await userModel.findOne({ email: value.email });
-    if (existingUser && existingUser?.otpVerify === true)
-      return ApiError(res, 409, "Email already exists");
 
-    // Hash the password before saving
-    const hashPass = await cryptPassword(value.password);
-    value.password = hashPass;
+    if (existingUser && existingUser?.otpVerify === true) {
+      return ApiError(res, 409, "Email already exists");
+    }
 
     // Otp ganrate and save in document
     const otp = randomNumberDigits(6);
@@ -30,7 +29,7 @@ const signUpController = async (req, res) => {
     // Send otp mail to user
     sendEmail(value.email, "OTP Varification", '', sendOtpTemplate(otp));
 
-    if(existingUser && existingUser?.otpVerify === false){
+    if (existingUser && existingUser?.otpVerify === false) {
       // Update User
       await userModel.updateOne({ email: value?.email }, { $set: value });
 
@@ -63,7 +62,7 @@ const logInController = async (req, res) => {
       // Password Maching
       const verifyPass = await comparePassword(value.password, userData.password);
       if (!verifyPass)
-        return ApiError(res, 401, "Invalid Email or Password");
+        return ApiError(res, 400, "Invalid Email or Password");
 
       const payload = {
         userId: userData._id,
@@ -73,8 +72,15 @@ const logInController = async (req, res) => {
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
 
-      // Save refresh token to user document
-      await userModel.updateOne({ _id: userData._id }, { $set: { refreshToken } });
+      // Set tokens in cookies
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        maxAge: 15 * 60 * 1000, // 15 minutes
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
+      });
 
       const userInfo = {
         _id: userData._id,
@@ -86,10 +92,10 @@ const logInController = async (req, res) => {
         updatedAt: userData.updatedAt,
       };
 
-      return ApiSuccess(res, 200, true, "User Login Successfully", { accessToken, refreshToken, userInfo })
+      return ApiSuccess(res, 200, true, "User Login Successfully", { userInfo })
 
     } else {
-      return ApiError(res, 401, "Invalid Email or Password");
+      return ApiError(res, 400, "Invalid Email or Password");
     }
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -98,21 +104,28 @@ const logInController = async (req, res) => {
 
 const refreshTokenController = async (req, res) => {
   try {
-    // Check Validation
-    const { error, value } = authValidation.refreshTokenSchema.validate(req.body);
-    if (error)
-      return ApiError(res, 400, error.details[0].message);
+    // Check Token
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return ApiError(res, 401, "Unauthorized - Missing token");
+
+    }
 
     // Verify Refresh Token
-    const userData = await verifyRefreshToken(value.refreshToken);
+    const userData = await verifyRefreshToken(refreshToken);
 
-    if (userData?.error)
-      return ApiError(res, 401, "Forbidden - Refresh token invalid or expire, please login again");
+    if (userData?.error) {
+      return ApiError(res, 403, "Forbidden - Refresh token invalid or expire, please login again");
+    }
 
     // Generate Access Token 
-    const accessToken = await generateAccessToken(userData?.userInfo);
+    const newAccessToken = await generateAccessToken(userData?.userInfo);
 
-    return ApiSuccess(res, 200, true, "Create Access Token Successfully", { accessToken })
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+    return ApiSuccess(res, 200, true, "Access token refreshed!");
 
   } catch (error) {
     return ApiError(res, 500, error?.message);
@@ -128,7 +141,7 @@ const forgotPasswordController = async (req, res) => {
 
     // Find User
     const userData = await userModel.findOne({ email: value.email, otpVerify: true });
-    
+
     if (userData) {
       const otp = randomNumberDigits(6);
 
@@ -194,7 +207,42 @@ const setNewPasswordController = async (req, res) => {
   } catch (error) {
     return ApiError(res, 500, error?.message);
   }
-}
+};
+
+const logoutController = async (req, res) => {
+  try {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
+    return ApiSuccess(res, 200, true, "Logout successfully");
+  } catch (error) {
+    return ApiError(res, 500, error?.message);
+  }
+};
+
+const authCheckController = async (req, res) => {
+  try {
+
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!accessToken) {
+      return ApiError(res, 401, "Unauthorized - Missing token")
+    }
+
+    if (!refreshToken) {
+      return ApiError(res, 401, "Unauthorized - Missing token")
+    }
+
+    // Get student by id
+    const userData = await userModel.findById(req.userId, { password: 0, otp: 0 });
+
+    return ApiSuccess(res, 200, true, "Check auth successfully", userData);
+
+  } catch (error) {
+    return ApiError(res, 500, error?.message);
+  }
+};
 
 module.exports = {
   signUpController,
@@ -203,4 +251,6 @@ module.exports = {
   forgotPasswordController,
   otpVerifyController,
   setNewPasswordController,
+  logoutController,
+  authCheckController,
 };

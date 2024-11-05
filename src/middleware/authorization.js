@@ -32,13 +32,11 @@ function authorize(accessRole) {
 
   return (req, res, next) => {
     try {
-      const bearerToken = req.header("Authorization");
+      const token = req.cookies.accessToken;
 
-      if (!bearerToken) {
+      if (!token) {
         return ApiError(res, 401, "Unauthorized - Missing token");
       }
-
-      const token = bearerToken.split(" ")[1];
 
       jwt.verify(token, accessTokenSecretKey, (err, data) => {
         if (err) {
@@ -50,8 +48,8 @@ function authorize(accessRole) {
           return ApiError(res, 403, "Permission denied");
         }
 
-        // // Attach the entire decoded data to the req object
-        // req.user = data;
+        // Attach the entire decoded data to the req object
+        req.userId = data?.userInfo?.userId;
 
         next();
       });
