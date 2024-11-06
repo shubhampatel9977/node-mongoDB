@@ -13,6 +13,6 @@ router.post('/otpVerify', authController.otpVerifyController);
 router.post('/setNewPassword', authController.setNewPasswordController);
 router.post('/logout', authController.logoutController);
 
-router.post('/check', authorize(['user']), authController.authCheckController);
+router.get('/check', authorize(['user']), authController.authCheckController);
 
 module.exports = router;

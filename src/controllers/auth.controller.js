@@ -224,13 +224,8 @@ const authCheckController = async (req, res) => {
   try {
 
     const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
 
     if (!accessToken) {
-      return ApiError(res, 401, "Unauthorized - Missing token")
-    }
-
-    if (!refreshToken) {
       return ApiError(res, 401, "Unauthorized - Missing token")
     }
 
