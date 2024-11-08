@@ -76,10 +76,16 @@ const logInController = async (req, res) => {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         maxAge: 15 * 60 * 1000, // 15 minutes
+        secure: false,
+        sameSite: 'Strict',
+        path: '/'
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        secure: false,
+        sameSite: 'Strict',
+        path: '/'
       });
 
       const userInfo = {
@@ -115,7 +121,7 @@ const refreshTokenController = async (req, res) => {
     const userData = await verifyRefreshToken(refreshToken);
 
     if (userData?.error) {
-      return ApiError(res, 403, "Forbidden - Refresh token invalid or expire, please login again");
+      return ApiError(res, 401, "Forbidden - Refresh token invalid or expire, please login again");
     }
 
     // Generate Access Token 
@@ -124,6 +130,9 @@ const refreshTokenController = async (req, res) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       maxAge: 15 * 60 * 1000, // 15 minutes
+      secure: false,
+      sameSite: 'Strict',
+      path: '/'
     });
     return ApiSuccess(res, 200, true, "Access token refreshed!");
 
@@ -220,25 +229,6 @@ const logoutController = async (req, res) => {
   }
 };
 
-const authCheckController = async (req, res) => {
-  try {
-
-    const accessToken = req.cookies.accessToken;
-
-    if (!accessToken) {
-      return ApiError(res, 401, "Unauthorized - Missing token")
-    }
-
-    // Get student by id
-    const userData = await userModel.findById(req.userId, { password: 0, otp: 0 });
-
-    return ApiSuccess(res, 200, true, "Check auth successfully", userData);
-
-  } catch (error) {
-    return ApiError(res, 500, error?.message);
-  }
-};
-
 module.exports = {
   signUpController,
   logInController,
@@ -247,5 +237,4 @@ module.exports = {
   otpVerifyController,
   setNewPasswordController,
   logoutController,
-  authCheckController,
 };

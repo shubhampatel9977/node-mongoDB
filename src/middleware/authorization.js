@@ -40,12 +40,12 @@ function authorize(accessRole) {
 
       jwt.verify(token, accessTokenSecretKey, (err, data) => {
         if (err) {
-          return ApiError(res, 403, "Forbidden - Invalid token");
+          return ApiError(res, 401, "Forbidden - Invalid token");
         }
         
         // Check if user has the required role
         if (accessRole.length && !accessRole.includes(data?.userInfo?.type)) {
-          return ApiError(res, 403, "Permission denied");
+          return ApiError(res, 401, "Permission denied");
         }
 
         // Attach the entire decoded data to the req object

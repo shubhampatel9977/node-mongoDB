@@ -31,7 +31,7 @@ const createTeacherController = async (req, res) => {
     const addTeacher = new teacherModel(value);
     await addTeacher.save();
 
-    return ApiSuccess(res, 201, true, "Teacher add successfully", result);
+    return ApiSuccess(res, 201, true, "Teacher add successfully");
 
   } catch (error) {
     return ApiError(res, 500, error?.message);
