@@ -1,0 +1,703 @@
+{
+	"info": {
+		"_postman_id": "747502b8-f4f9-4e20-ad69-336269b18367",
+		"name": "NodeApiForMongo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34082702",
+		"_collection_link": "https://restless-robot-543807.postman.co/workspace/legalCare_for_frontend~8870e9e6-d7ca-40c8-bdaa-44535a514100/collection/34082702-747502b8-f4f9-4e20-ad69-336269b18367?action=share&source=collection_link&creator=34082702"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Sign In",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"shubham\",\n    \"email\": \"shubham.mactosys12@gmail.com\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/signUp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signUp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logIn",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"shubham.mactosys12@gmail.com\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/logIn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"logIn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/refreshToken",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"shubham.mactosys12@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/forgotPassword",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"forgotPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OTP Verify",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"shubham.mactosys12@gmail.com\",\n    \"otp\" : \"440358\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/otpVerify",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"otpVerify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set New Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"shubham.mactosys12@gmail.com\",\n    \"password\" : \"12345678\",\n    \"confirmPassword\" : \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/setNewPassword",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"setNewPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Students",
+			"item": [
+				{
+					"name": "Create Student",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test-1",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "31",
+									"type": "text"
+								},
+								{
+									"key": "college",
+									"value": "SAGE University",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Softwere Developer",
+									"type": "text"
+								},
+								{
+									"key": "profile",
+									"type": "file",
+									"src": "/home/shree/Downloads/BitMoji/images (2).jpeg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/student",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"student"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllStudent",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjliYTgzNTIzNzkxYTBlYzg2MDQ3MmMiLCJlbWFpbCI6ImRpcGFua2E5OTBAZ21haWwuY29tIiwidHlwZSI6InVzZXIifSwiaWF0IjoxNzIyNTgyODc2LCJleHAiOjE3MjI1ODM3NzZ9.IS9wtSUVqOYrMxr1UKUVLgQ5WfayCqMT9sZCf-YaqvA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/student?page=1&limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"student"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "StudentById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjlhNTg1ODJiOTljOTRiMmQ3ZmQ4NGQiLCJlbWFpbCI6ImRlbW8yQGdtYWlsLmNvbSIsInR5cGUiOiJ1c2VyIn0sImlhdCI6MTcyMTY0OTkyNywiZXhwIjoxNzIxNjUwODI3fQ.2KFGHvAnvHwi6pkGGyKbB5T4claZicI47DuCaz2Cq5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/student/669e2f86bd47ba945da236ce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"student",
+								"669e2f86bd47ba945da236ce"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateStudent",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjlhNTg1ODJiOTljOTRiMmQ3ZmQ4NGQiLCJlbWFpbCI6ImRlbW8yQGdtYWlsLmNvbSIsInR5cGUiOiJ1c2VyIn0sImlhdCI6MTcyMTY1MTg3NCwiZXhwIjoxNzIxNjUyNzc0fQ.z4A5ou_SrDygVV9wHwsJx2St52zow6F5kJTwVJ6tpkA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test11-update",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "40",
+									"type": "text"
+								},
+								{
+									"key": "college",
+									"value": "SAGE University -2",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Softwere Developer update",
+									"type": "text"
+								},
+								{
+									"key": "profile",
+									"type": "file",
+									"src": "postman-cloud:///1ef480be-67ff-43c0-9f89-87278c6bf585"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/student/669e2f86bd47ba945da236ce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"student",
+								"669e2f86bd47ba945da236ce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteStudent",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjlhNTg1ODJiOTljOTRiMmQ3ZmQ4NGQiLCJlbWFpbCI6ImRlbW8yQGdtYWlsLmNvbSIsInR5cGUiOiJ1c2VyIn0sImlhdCI6MTcyMTY1MjQ1MiwiZXhwIjoxNzIxNjUzMzUyfQ.6kQaeC3ZZVR2pTvDIt2MZMGlyzzZvHx5GNBucKVMMpE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/student/669e2f86bd47ba945da236ce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"student",
+								"669e2f86bd47ba945da236ce"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Teachers",
+			"item": [
+				{
+					"name": "Create Teacher",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjllNjM1ZDAzZjY3NzI0MjE5NzJiOTAiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInR5cGUiOiJhZG1pbiJ9LCJpYXQiOjE3MjI1Nzk5MjMsImV4cCI6MTcyMjU4MDgyM30.DRH0HStpRlYcUfpirZRuTwpPhynmLgSEUr9SeWqfmDI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Teacher-1",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "31",
+									"type": "text"
+								},
+								{
+									"key": "college",
+									"value": "SAGE University",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Softwere Developer",
+									"type": "text"
+								},
+								{
+									"key": "profile",
+									"type": "file",
+									"src": "/home/shree/Downloads/BitMoji/images (1).jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/admin/teacher",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"admin",
+								"teacher"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Teachers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjllNjM1ZDAzZjY3NzI0MjE5NzJiOTAiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInR5cGUiOiJhZG1pbiJ9LCJpYXQiOjE3MjI1Nzk5MjMsImV4cCI6MTcyMjU4MDgyM30.DRH0HStpRlYcUfpirZRuTwpPhynmLgSEUr9SeWqfmDI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/admin/teacher?page=1&limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"admin",
+								"teacher"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "name",
+									"value": "demo",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Teachers By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjllNjM1ZDAzZjY3NzI0MjE5NzJiOTAiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInR5cGUiOiJhZG1pbiJ9LCJpYXQiOjE3MjE2NTY1MjcsImV4cCI6MTcyMTY1NzQyN30.VfmdTyK2iPhTYpnD3nfXT5mQ0PfnTMcIpX65N5wkUMk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/admin/teacher/669e652803f6772421972b94",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"admin",
+								"teacher",
+								"669e652803f6772421972b94"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update Teachers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjllNjM1ZDAzZjY3NzI0MjE5NzJiOTAiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInR5cGUiOiJhZG1pbiJ9LCJpYXQiOjE3MjE2NTY1MjcsImV4cCI6MTcyMTY1NzQyN30.VfmdTyK2iPhTYpnD3nfXT5mQ0PfnTMcIpX65N5wkUMk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test11-update",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "40",
+									"type": "text"
+								},
+								{
+									"key": "college",
+									"value": "SAGE University -2",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Softwere Developer update",
+									"type": "text"
+								},
+								{
+									"key": "profile",
+									"type": "file",
+									"src": "postman-cloud:///1ef480be-67ff-43c0-9f89-87278c6bf585"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/admin/teacher/669e652803f6772421972b94",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"admin",
+								"teacher",
+								"669e652803f6772421972b94"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Teachers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mbyI6eyJ1c2VySWQiOiI2NjliYTgzNTIzNzkxYTBlYzg2MDQ3MmMiLCJlbWFpbCI6ImRpcGFua2E5OTBAZ21haWwuY29tIiwidHlwZSI6InVzZXIifSwiaWF0IjoxNzIxNjU2OTUyLCJleHAiOjE3MjE2NTc4NTJ9.NUMkZlU_9RHc_Froye6bpFLg1JpaWof5G45OSe8rIXE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/admin/teacher/669e652803f6772421972b94",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"admin",
+								"teacher",
+								"669e652803f6772421972b94"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
